@@ -235,14 +235,18 @@ function MainProject({ project }) {
         ))}
       </FeatureList>
 
-      <SubHead>트러블슈팅</SubHead>
-      <AccordionList>
-        {project.troubleshooting.map((item, index) => (
-          <AccordionItem key={item.title} title={item.title} defaultOpen={index === 0}>
-            <TroubleDetail item={item} />
-          </AccordionItem>
-        ))}
-      </AccordionList>
+      {project.troubleshooting?.length > 0 && (
+        <>
+          <SubHead>트러블슈팅</SubHead>
+          <AccordionList>
+            {project.troubleshooting.map((item, index) => (
+              <AccordionItem key={item.title} title={item.title} defaultOpen={index === 0}>
+                <TroubleDetail item={item} />
+              </AccordionItem>
+            ))}
+          </AccordionList>
+        </>
+      )}
 
       {project.limitation && (
         <Limitation>
