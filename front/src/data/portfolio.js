@@ -9,6 +9,7 @@ import securityConfigCode from './code/SecurityConfig.java?raw';
 import emailServiceCode from './code/EmailService.java?raw';
 import jwtUtilCode from './code/JwtUtil.java?raw';
 import kakaoOAuthCode from './code/KakaoOAuthService.java?raw';
+import adminMemberCode from './code/AdminMemberService.java?raw';
 import roleCode from './code/role.js?raw';
 import roleRouteCode from './code/RoleRoute.jsx?raw';
 
@@ -265,6 +266,25 @@ isExpired는 만료된 토큰이면 파싱 단계에서 먼저 예외가 나기 
 회원·유저·소셜계정 세 엔티티를 한 트랜잭션에서 일관되게 생성하도록 묶어, 중간에 실패해도 어중간한 데이터가 남지 않게 했습니다.`,
           trouble: `카카오가 이메일 제공에 동의하지 않으면 이메일이 없어 가입이 막히는 문제가 있었습니다.
 소셜 고유 ID 기반의 유니크한 임시 이메일(kakao_{providerUserId}@social.sloway)을 생성해, 가입을 막지 않으면서도 이메일 유니크 제약을 지키도록 처리했습니다.`,
+        },
+        {
+          id: 'sloway-admin-member',
+          name: 'AdminMemberService.java',
+          language: 'java',
+          image: { src: '', alt: '관리자 회원 관리 / 정지 화면' },
+          code: adminMemberCode,
+          highlights: [
+            { line: 52, label: '호스트 여부를 한 번에 조회 — 목록 N+1 방지' },
+            { line: 87, label: '이미 정지·탈퇴 회원은 정지 거절 (상태 방어)' },
+            { line: 92, label: 'days null/음수 → 영구, 양수 → 기간 정지' },
+          ],
+          explain: `관리자(ADMIN)가 회원을 관리하는 서비스입니다.
+회원 목록(페이징)·상세 조회와, 회원 정지(기간/영구)·정지 해제를 담당합니다.
+정지는 사유와 '활성 상태'를 먼저 검증해 잘못된 요청을 DB 작업 전에 막고, 상태 전환은 엔티티 의미 메서드(suspend/unsuspend)로 캡슐화했습니다.`,
+          retro: `정지/해제는 '사유 없음', '이미 정지·탈퇴한 회원' 같은 잘못된 요청을 조회·변경 전에 먼저 걸러내도록 방어 순서를 잡았습니다.
+상태 전환 로직을 서비스에 흩지 않고 엔티티 의미 메서드로 모아, 서비스는 '무엇을 검증할지'에만 집중하도록 했습니다.`,
+          trouble: `회원 목록에서 각 회원이 호스트인지 매번 조회하면 N+1 쿼리가 발생합니다.
+페이지에 담긴 memberNo들을 모아 호스트 여부를 한 번에 조회(Set)한 뒤 비교하도록 바꿔, 회원 수와 무관하게 쿼리 수를 고정했습니다.`,
         },
         {
           id: 'sloway-role',
