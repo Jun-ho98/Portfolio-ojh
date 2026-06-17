@@ -271,10 +271,10 @@ const ActivityBar = styled.div`
 
 // 초기에 열어둘 탭 구성 (실제 존재하는 id만 사용되도록 아래에서 필터링).
 const INITIAL_OPEN = [
-  'sloway-email',
+  'sloway-auth',
   'sloway-jwt',
-  'sloway-kakao',
   'sloway-admin-member',
+  'sloway-exception',
   'sloway-role',
   'sloway-security',
 ];

@@ -6,10 +6,13 @@
 // → 이스케이프/전사 오류 없이 정확하게 표시되며, 코드 교체 시 ./code 의 파일만 바꾸면 됩니다.
 // (출처: Sloway_Project 레포의 본인 담당 도메인 — 인증/회원)
 import securityConfigCode from './code/SecurityConfig.java?raw';
+import authServiceCode from './code/AuthService.java?raw';
 import emailServiceCode from './code/EmailService.java?raw';
 import jwtUtilCode from './code/JwtUtil.java?raw';
 import kakaoOAuthCode from './code/KakaoOAuthService.java?raw';
 import adminMemberCode from './code/AdminMemberService.java?raw';
+import globalExceptionCode from './code/GlobalExceptionHandler.java?raw';
+import memberErrorCode from './code/MemberErrorCode.java?raw';
 import roleCode from './code/role.js?raw';
 import roleRouteCode from './code/RoleRoute.jsx?raw';
 
@@ -212,6 +215,25 @@ JWT는 stateless라 탈취 시 만료 전까지 무효화가 어렵다는 위험
 - 점검 중 관리자만 봐야 할 정보가 인증 없이 열려 있는 것을 발견 → 해당 경로에 권한을 명확히 지정해 차단.`,
         },
         {
+          id: 'sloway-auth',
+          name: 'AuthService.java',
+          language: 'java',
+          image: { src: '', alt: '회원가입 화면' },
+          code: authServiceCode,
+          highlights: [
+            { line: 76, label: '가입 직전 이메일 인증 완료 재확인 (프론트 우회 방지)' },
+            { line: 80, label: '비밀번호 BCrypt 암호화 — 평문 저장 금지' },
+            { line: 90, label: 'Member(공통) 저장 → memberNo 발급 후 User 연결' },
+          ],
+          explain: `일반회원 회원가입 처리 본체입니다.
+입력 검증 → 이메일 중복 → 이메일 인증 완료 확인 → 비밀번호 BCrypt 암호화 → 공통 Member 저장(번호 발급) → User(일반회원) 저장 순으로 처리합니다.
+같은 클래스에 이메일 중복확인·아이디 찾기(마스킹)·비밀번호 재설정도 함께 둬, 회원가입 관련 흐름을 한곳에서 관리합니다.`,
+          retro: `회원가입 같은 쓰기 작업은 잘못된 입력을 DB 접근 전에 먼저 막도록 검증 순서를 잡았습니다.
+Member(공통)와 User/Host(역할별)를 분리해, 같은 이메일 테이블을 공유하면서도 역할별 정보를 따로 관리할 수 있게 설계했습니다.`,
+          trouble: `비밀번호 재설정은 프론트 단계만 믿으면 인증을 우회당할 수 있어, 서버에서 이메일 인증 여부(isVerified)를 한 번 더 검증하는 보안 게이트를 뒀습니다.
+가입에서도 같은 방식으로, 인증되지 않은 이메일은 가입 직전에 막습니다.`,
+        },
+        {
           id: 'sloway-email',
           name: 'EmailService.java',
           language: 'java',
@@ -285,6 +307,40 @@ isExpired는 만료된 토큰이면 파싱 단계에서 먼저 예외가 나기 
 상태 전환 로직을 서비스에 흩지 않고 엔티티 의미 메서드로 모아, 서비스는 '무엇을 검증할지'에만 집중하도록 했습니다.`,
           trouble: `회원 목록에서 각 회원이 호스트인지 매번 조회하면 N+1 쿼리가 발생합니다.
 페이지에 담긴 memberNo들을 모아 호스트 여부를 한 번에 조회(Set)한 뒤 비교하도록 바꿔, 회원 수와 무관하게 쿼리 수를 고정했습니다.`,
+        },
+        {
+          id: 'sloway-exception',
+          name: 'GlobalExceptionHandler.java',
+          language: 'java',
+          image: { src: '', alt: '에러 응답 / 예외 처리' },
+          code: globalExceptionCode,
+          highlights: [
+            { line: 14, label: '비즈니스 예외 → ErrorCode가 상태·메시지 결정' },
+            { line: 36, label: '미처리 예외는 500 + 내부 메시지 숨김 (운영 안전)' },
+          ],
+          explain: `전역 예외 처리(@RestControllerAdvice)입니다.
+비즈니스 예외(CustomException)는 ErrorCode가 HTTP 상태·메시지를 결정하고, 입력값 오류는 400, 그 외 미처리 예외는 500으로 일관되게 응답합니다.
+컨트롤러마다 try-catch를 흩지 않고 한 곳에서 응답 형식을 통일합니다.`,
+          retro: `예외 처리를 한 곳으로 모아 응답 형식을 통일했습니다.
+미처리 예외는 내부 메시지를 그대로 노출하지 않고 일반 메시지로 바꿔, 운영 중 정보 노출을 막았습니다.`,
+          trouble: '',
+        },
+        {
+          id: 'sloway-errorcode',
+          name: 'MemberErrorCode.java',
+          language: 'java',
+          image: { src: '', alt: '도메인별 에러 코드 설계' },
+          code: memberErrorCode,
+          highlights: [
+            { line: 23, label: 'ErrorCode 인터페이스 구현 — 도메인별 에러 enum' },
+            { line: 26, label: '409 — 자원 상태 충돌을 명확한 코드로 구분' },
+          ],
+          explain: `도메인별 에러 코드 설계입니다.
+공통 ErrorCode 인터페이스를 두고 도메인마다 enum으로 구현해, '상태코드 + 메시지'를 한곳에서 관리합니다.
+404(자원 부재)/409(상태 충돌)/400(입력 오류) 기준을 정해 일관되게 분류합니다.`,
+          retro: `에러를 문자열·매직값으로 흩지 않고 도메인 enum으로 모아, 새 에러가 생겨도 한 곳에 추가하면 GlobalExceptionHandler가 알아서 처리하도록 했습니다.
+메시지·상태코드를 바꿔야 할 때 고칠 지점이 하나로 좁혀집니다.`,
+          trouble: '',
         },
         {
           id: 'sloway-role',
