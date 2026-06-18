@@ -1,0 +1,56 @@
+name: Deploy to GitHub Pages
+
+# main 에 푸시될 때마다 front/ 를 빌드해 GitHub Pages 로 배포합니다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # 수동 실행도 허용
+
+# Pages 배포에 필요한 최소 권한
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시에 한 번만 배포 (이전 실행이 진행 중이면 취소)
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front # 앱이 front/ 하위에 있으므로 작업 디렉터리 지정
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: front/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
