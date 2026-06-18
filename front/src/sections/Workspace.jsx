@@ -410,20 +410,24 @@ function Workspace() {
                   <b>{file.name}</b>
                 </Crumb>
                 <Toggles>
-                  <Chip
-                    type="button"
-                    $active={showImage}
-                    onClick={() => setShowImage((prev) => !prev)}
-                  >
-                    이미지
-                  </Chip>
-                  <Chip
-                    type="button"
-                    $active={showCode}
-                    onClick={() => setShowCode((prev) => !prev)}
-                  >
-                    코드
-                  </Chip>
+                  {!file.noImage && (
+                    <>
+                      <Chip
+                        type="button"
+                        $active={showImage}
+                        onClick={() => setShowImage((prev) => !prev)}
+                      >
+                        이미지
+                      </Chip>
+                      <Chip
+                        type="button"
+                        $active={showCode}
+                        onClick={() => setShowCode((prev) => !prev)}
+                      >
+                        코드
+                      </Chip>
+                    </>
+                  )}
                   <BackBtn as="button" type="button" onClick={goToExplain}>
                     ← 설명으로
                   </BackBtn>

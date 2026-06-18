@@ -200,9 +200,10 @@ function CodeBlock({ file }) {
 }
 
 function CodePane({ file, showImage, showCode }) {
-  // 둘 다 꺼지는 상태를 막아 항상 최소 하나는 보이도록 보정
-  const image = showImage || !showCode;
-  const code = showCode || !showImage;
+  // noImage 파일(백엔드 로직·유틸 등 화면이 없는 코드)은 항상 코드만 전체폭으로.
+  // 그 외에는 토글 상태에 따르되, 둘 다 꺼지지 않도록 보정.
+  const image = file.noImage ? false : showImage || !showCode;
+  const code = file.noImage ? true : showCode || !showImage;
 
   return (
     <Area>
