@@ -24,7 +24,7 @@ function Footer() {
       <Container>
         <Inner>
           <span>
-            © {profile.name} ({profile.nameEn})
+            © {profile.name} ({profile.nameKo})
           </span>
           <span>{profile.tagline}</span>
         </Inner>

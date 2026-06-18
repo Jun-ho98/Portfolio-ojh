@@ -23,7 +23,7 @@ import loginInterceptorCode from './code/LoginInterceptor.java?raw';
 
 export const profile = {
   name: 'Oh Junho',
-  nameEn: 'Oh Jun Ho',
+  nameKo: '오준호',
   role: '백엔드 개발자',
   roleNote: '신입 · 풀스택 가능',
   tagline: '늘 더 나은 방법을 고민하는 백엔드 개발자',

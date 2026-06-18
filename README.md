@@ -1,6 +1,6 @@
 <div align="center">
 
-#  OHjunho · Backend Developer Portfolio
+# Oh Junho · Backend Developer Portfolio
 
 **“늘 더 나은 방법을 고민하는 백엔드 개발자”**
 
@@ -30,7 +30,7 @@
 
 | | |
 | --- | --- |
-| **이름** | 오준호 (Oh Jun Ho) |
+| **이름** | 오준호 (Oh Junho) |
 | **직무** | 백엔드 개발자 (신입, 풀스택 가능) |
 | **교육** | KH정보교육원 AWS 클라우드 기반 DevOps 개발자 양성과정 수료 (2025.11~2026.06) |
 | **학력** | 부천대학교 컴퓨터소프트웨어과 졸업 |
@@ -157,5 +157,5 @@ npm run build    # 프로덕션 빌드 (dist/)
 ---
 
 <div align="center">
-<sub>© 오준호 (Oh Jun Ho)</sub>
+<sub>© Oh Junho (오준호)</sub>
 </div>
