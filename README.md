@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌿 오준호 · Backend Developer Portfolio
+#  OHjunho · Backend Developer Portfolio
 
 **“늘 더 나은 방법을 고민하는 백엔드 개발자”**
 

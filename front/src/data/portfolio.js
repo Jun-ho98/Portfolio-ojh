@@ -20,7 +20,7 @@ import emplServiceCode from './code/EmplService_TaskFlow.java?raw';
 import loginInterceptorCode from './code/LoginInterceptor.java?raw';
 
 export const profile = {
-  name: '오준호',
+  name: 'Oh Junho',
   nameEn: 'Oh Jun Ho',
   role: '백엔드 개발자',
   roleNote: '신입 · 풀스택 가능',
