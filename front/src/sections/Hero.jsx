@@ -4,7 +4,7 @@ import Reveal from '../components/Reveal';
 import { media } from '../styles/theme';
 import { profile } from '../data/portfolio';
 
-// 사이트의 첫 화면. 정체성 한 줄("비효율을 그냥 지나치지 못하는...")을 전면에 둡니다.
+// 사이트의 첫 화면. 정체성 한 줄("늘 더 나은 방법을 고민하는...")을 전면에 둡니다.
 // CTA 두 개: 프로젝트로 스크롤 / 이메일 보내기.
 
 const Wrapper = styled.section`
@@ -119,7 +119,7 @@ function Hero() {
         </Reveal>
         <Reveal delay={80}>
           <Title>
-            비효율을 그냥 지나치지 못하는 <em>백엔드 개발자</em>
+            늘 더 나은 방법을 고민하는 <em>백엔드 개발자</em>
           </Title>
         </Reveal>
         <Reveal delay={160}>
